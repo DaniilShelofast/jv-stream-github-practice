@@ -15,6 +15,7 @@ public class StreamPractice {
 
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
+                .map(String::trim)
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .mapToInt(Integer::parseInt)
                 .filter(i -> i % 2 == 0)
@@ -34,16 +35,16 @@ public class StreamPractice {
 
     public List<Person> selectMenByAge(List<Person> peopleList, int fromAge, int toAge) {
         return peopleList.stream()
-                .filter(person -> person.getSex().equals(Person.Sex.MAN)
+                .filter(person -> person.getSex() == Person.Sex.MAN
                         && (fromAge <= person.getAge() && person.getAge() <= toAge))
                 .collect(Collectors.toList());
     }
 
     public List<Person> getWorkablePeople(int fromAge, int femaleToAge,
                                           int maleToAge, List<Person> peopleList) {
-        Predicate<Person> male = person -> person.getSex().equals(Person.Sex.MAN)
+        Predicate<Person> male = person -> person.getSex() == Person.Sex.MAN
                 && (fromAge <= person.getAge() && person.getAge() <= maleToAge);
-        Predicate<Person> female = person -> person.getSex().equals(Person.Sex.WOMAN)
+        Predicate<Person> female = person -> person.getSex() == Person.Sex.WOMAN
                 && (fromAge <= person.getAge() && person.getAge() <= femaleToAge);
         return peopleList.stream()
                 .filter(male.or(female))
@@ -51,7 +52,7 @@ public class StreamPractice {
     }
 
     public static List<String> getCatsNames(List<Person> peopleList, int femaleAge) {
-        Predicate<Person> validateFemale = person -> person.getSex().equals(Person.Sex.WOMAN)
+        Predicate<Person> validateFemale = person -> person.getSex() == Person.Sex.WOMAN
                 && person.getAge() >= femaleAge;
         return peopleList.stream()
                 .filter(validateFemale)
@@ -61,8 +62,9 @@ public class StreamPractice {
     }
 
     public static List<String> validateCandidates(List<Candidate> candidates) {
+        Predicate<Candidate> validator = new CandidateValidator();
         return candidates.stream()
-                .filter(candidate -> new CandidateValidator().test(candidate))
+                .filter(validator)
                 .sorted(Comparator.comparing(Candidate::getName))
                 .map(Candidate::getName)
                 .collect(Collectors.toList());

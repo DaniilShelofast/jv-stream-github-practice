@@ -5,13 +5,20 @@ import model.Candidate;
 
 public class CandidateValidator implements Predicate<Candidate> {
 
+    private static final int MIN_AGE = 35;
+    private static final int MIN_YEARS_IN_UKRAINE = 10;
+    private static final String UKRAINIAN = "Ukrainian";
+    private static final int INDEX_DATE_FROM = 0;
+    private static final int INDEX_DATE_TO = 1;
+
     @Override
     public boolean test(Candidate candidate) {
         String[] date = candidate.getPeriodsInUkr().split("-");
-        int timeInUkraine = Integer.parseInt(date[1]) - Integer.parseInt(date[0]);
-        return candidate.getAge() >= 35
+        int timeInUkraine = Integer.parseInt(date[INDEX_DATE_TO])
+                - Integer.parseInt(date[INDEX_DATE_FROM]);
+        return candidate.getAge() >= MIN_AGE
                 && candidate.isAllowedToVote()
-                && candidate.getNationality().equals("Ukrainian")
-                && timeInUkraine >= 10;
+                && UKRAINIAN.equals(candidate.getNationality())
+                && timeInUkraine >= MIN_YEARS_IN_UKRAINE;
     }
 }
