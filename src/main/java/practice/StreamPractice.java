@@ -3,7 +3,6 @@ package practice;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,8 +14,8 @@ public class StreamPractice {
 
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
-                .map(String::trim)
                 .flatMap(s -> Arrays.stream(s.split(",")))
+                .map(String::trim)
                 .mapToInt(Integer::parseInt)
                 .filter(i -> i % 2 == 0)
                 .min()
@@ -30,7 +29,7 @@ public class StreamPractice {
                 .filter(integer -> integer % 2 == 1)
                 .mapToInt(Integer::intValue)
                 .average()
-                .orElseThrow(NoSuchElementException::new);
+                .getAsDouble();
     }
 
     public List<Person> selectMenByAge(List<Person> peopleList, int fromAge, int toAge) {
@@ -42,10 +41,10 @@ public class StreamPractice {
 
     public List<Person> getWorkablePeople(int fromAge, int femaleToAge,
                                           int maleToAge, List<Person> peopleList) {
-        Predicate<Person> male = person -> person.getSex() == Person.Sex.MAN
-                && (fromAge <= person.getAge() && person.getAge() <= maleToAge);
         Predicate<Person> female = person -> person.getSex() == Person.Sex.WOMAN
-                && (fromAge <= person.getAge() && person.getAge() <= femaleToAge);
+                && (person.getAge() >= fromAge && person.getAge() <= femaleToAge);
+        Predicate<Person> male = person -> person.getSex() == Person.Sex.MAN
+                && (person.getAge() >= fromAge && person.getAge() <= maleToAge);
         return peopleList.stream()
                 .filter(male.or(female))
                 .collect(Collectors.toList());
