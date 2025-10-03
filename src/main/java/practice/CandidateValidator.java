@@ -10,10 +10,11 @@ public class CandidateValidator implements Predicate<Candidate> {
     private static final String UKRAINIAN = "Ukrainian";
     private static final int INDEX_DATE_FROM = 0;
     private static final int INDEX_DATE_TO = 1;
+    private static final String SPLIT = "-";
 
     @Override
     public boolean test(Candidate candidate) {
-        String[] date = candidate.getPeriodsInUkr().split("-");
+        String[] date = candidate.getPeriodsInUkr().split(SPLIT);
         int timeInUkraine = Integer.parseInt(date[INDEX_DATE_TO])
                 - Integer.parseInt(date[INDEX_DATE_FROM]);
         return candidate.getAge() >= MIN_AGE

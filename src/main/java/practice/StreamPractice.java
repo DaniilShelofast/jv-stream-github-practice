@@ -12,9 +12,11 @@ import model.Person;
 
 public class StreamPractice {
 
+    private static final String SPLIT = ",";
+
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
-                .flatMap(s -> Arrays.stream(s.split(",")))
+                .flatMap(s -> Arrays.stream(s.split(SPLIT)))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .mapToInt(Integer::parseInt)
@@ -42,29 +44,27 @@ public class StreamPractice {
 
     public List<Person> getWorkablePeople(int fromAge, int femaleToAge,
                                           int maleToAge, List<Person> peopleList) {
-        Predicate<Person> female = person -> person.getSex() == Person.Sex.WOMAN
-                && (person.getAge() >= fromAge && person.getAge() <= femaleToAge);
-        Predicate<Person> male = person -> person.getSex() == Person.Sex.MAN
-                && (person.getAge() >= fromAge && person.getAge() <= maleToAge);
         return peopleList.stream()
-                .filter(male.or(female))
+                .filter(p -> p.getSex() == Person.Sex.WOMAN
+                        && (p.getAge() >= fromAge && p.getAge() <= femaleToAge)
+                        || p.getSex() == Person.Sex.MAN
+                        && (p.getAge() >= fromAge && p.getAge() <= maleToAge))
                 .collect(Collectors.toList());
     }
 
     public static List<String> getCatsNames(List<Person> peopleList, int femaleAge) {
-        Predicate<Person> validateFemale = person -> person.getSex() == Person.Sex.WOMAN
-                && person.getAge() >= femaleAge;
         return peopleList.stream()
-                .filter(validateFemale)
-                .flatMap(l -> l.getCats().stream())
+                .filter(person -> person.getSex() == Person.Sex.WOMAN
+                        && person.getAge() >= femaleAge)
+                .flatMap(c -> c.getCats().stream())
                 .map(Cat::getName)
                 .collect(Collectors.toList());
     }
 
     public static List<String> validateCandidates(List<Candidate> candidates) {
-        Predicate<Candidate> validator = new CandidateValidator();
+        Predicate<Candidate> validate = new CandidateValidator();
         return candidates.stream()
-                .filter(validator)
+                .filter(validate)
                 .sorted(Comparator.comparing(Candidate::getName))
                 .map(Candidate::getName)
                 .collect(Collectors.toList());
